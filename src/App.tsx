@@ -1,5 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Plus, X, Minus, Trash2, Download, Upload, Copy, Check } from "lucide-react";
+import {
+  Check,
+  Copy,
+  Download,
+  Minus,
+  Plus,
+  Trash2,
+  Upload,
+  X,
+} from "lucide-react";
+import React, { useRef, useState } from "react";
 
 interface Task {
   id: string;
@@ -32,7 +41,8 @@ const useLocalStorage = <T,>(key: string, initialValue: T) => {
 
   const setValue = (value: T | ((val: T) => T)) => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      const valueToStore =
+        value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
@@ -44,50 +54,53 @@ const useLocalStorage = <T,>(key: string, initialValue: T) => {
 };
 
 const TrelloBoard: React.FC = () => {
-  const [sections, setSections] = useLocalStorage<Section[]>("trello-sections", [
-    {
-      id: "finished",
-      title: "✅ Finished",
-      columns: [
-        { id: "mon", title: "Mon", tasks: [] },
-        { id: "tue", title: "Tue", tasks: [] },
-        { id: "wed", title: "Wed", tasks: [] },
-        { id: "thu", title: "Thu", tasks: [] },
-        { id: "fri", title: "Fri", tasks: [] },
-        { id: "weekend", title: "Sat+Sun", tasks: [] }
-      ]
-    },
-    {
-      id: "current",
-      title: "🔥 Current",
-      columns: [
-        { id: "quickie", title: "Quickie", tasks: [] },
-        { id: "errand", title: "Errand", tasks: [] },
-        { id: "chore", title: "Chore", tasks: [] },
-        { id: "project", title: "Project", tasks: [] }
-      ]
-    },
-    {
-      id: "backlog",
-      title: "📋 Backlog",
-      columns: [
-        { id: "backlog-quickie", title: "Quickie", tasks: [] },
-        { id: "backlog-errand", title: "Errand", tasks: [] },
-        { id: "backlog-chore", title: "Chore", tasks: [] },
-        { id: "backlog-project", title: "Project", tasks: [] }
-      ]
-    },
-    {
-      id: "icebox",
-      title: "🧊 Icebox",
-      columns: [
-        { id: "icebox-quickie", title: "Quickie", tasks: [] },
-        { id: "icebox-errand", title: "Errand", tasks: [] },
-        { id: "icebox-chore", title: "Chore", tasks: [] },
-        { id: "icebox-project", title: "Project", tasks: [] }
-      ]
-    }
-  ]);
+  const [sections, setSections] = useLocalStorage<Section[]>(
+    "trello-sections",
+    [
+      {
+        id: "finished",
+        title: "✅ Finished",
+        columns: [
+          { id: "mon", title: "Mon", tasks: [] },
+          { id: "tue", title: "Tue", tasks: [] },
+          { id: "wed", title: "Wed", tasks: [] },
+          { id: "thu", title: "Thu", tasks: [] },
+          { id: "fri", title: "Fri", tasks: [] },
+          { id: "weekend", title: "Sat+Sun", tasks: [] },
+        ],
+      },
+      {
+        id: "current",
+        title: "🔥 Current",
+        columns: [
+          { id: "quickie", title: "Quickie", tasks: [] },
+          { id: "errand", title: "Errand", tasks: [] },
+          { id: "chore", title: "Chore", tasks: [] },
+          { id: "project", title: "Project", tasks: [] },
+        ],
+      },
+      {
+        id: "backlog",
+        title: "📋 Backlog",
+        columns: [
+          { id: "backlog-quickie", title: "Quickie", tasks: [] },
+          { id: "backlog-errand", title: "Errand", tasks: [] },
+          { id: "backlog-chore", title: "Chore", tasks: [] },
+          { id: "backlog-project", title: "Project", tasks: [] },
+        ],
+      },
+      {
+        id: "icebox",
+        title: "🧊 Icebox",
+        columns: [
+          { id: "icebox-quickie", title: "Quickie", tasks: [] },
+          { id: "icebox-errand", title: "Errand", tasks: [] },
+          { id: "icebox-chore", title: "Chore", tasks: [] },
+          { id: "icebox-project", title: "Project", tasks: [] },
+        ],
+      },
+    ]
+  );
 
   const [draggedTask, setDraggedTask] = useState<{
     task: Task;
@@ -350,11 +363,13 @@ const TrelloBoard: React.FC = () => {
 
   const exportData = () => {
     const dataStr = JSON.stringify(sections, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `focustask-export-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `focustask-export-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -372,16 +387,18 @@ const TrelloBoard: React.FC = () => {
         if (Array.isArray(importedData)) {
           setSections(importedData);
         } else {
-          alert('Invalid JSON format. Please select a valid FocusTask export file.');
+          alert(
+            "Invalid JSON format. Please select a valid FocusTask export file."
+          );
         }
-      } catch (error) {
-        alert('Error reading file. Please select a valid JSON file.');
+      } catch {
+        alert("Error reading file. Please select a valid JSON file.");
       }
     };
     reader.readAsText(file);
-    
+
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
@@ -391,31 +408,29 @@ const TrelloBoard: React.FC = () => {
 
   const copySectionAsMarkdown = async (section: Section) => {
     const markdownLines: string[] = [];
-    
-    section.columns.forEach(column => {
-      column.tasks.forEach(task => {
-        const checkbox = task.completed ? '[x]' : '[ ]';
+
+    section.columns.forEach((column) => {
+      column.tasks.forEach((task) => {
+        const checkbox = task.completed ? "[x]" : "[ ]";
         markdownLines.push(`- ${checkbox} ${column.title}: ${task.title}`);
       });
     });
-    
-    const markdown = markdownLines.join('\n');
-    
+
+    const markdown = markdownLines.join("\n");
+
     try {
       await navigator.clipboard.writeText(markdown);
       setCopiedSection(section.id);
       setTimeout(() => setCopiedSection(null), 2000);
     } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
+      console.error("Failed to copy to clipboard:", err);
     }
   };
 
   return (
     <div className="min-h-screen bg-blue-50 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          FocusTask
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-800">FocusTask</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={exportData}
@@ -448,7 +463,7 @@ const TrelloBoard: React.FC = () => {
         ref={fileInputRef}
         onChange={importData}
         accept=".json"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
 
       <div className="bg-white border border-gray-300 overflow-hidden">
