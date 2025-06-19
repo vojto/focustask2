@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Plus, X, Minus, Trash2, Download, Upload } from "lucide-react";
+import { Plus, X, Minus, Trash2, Download, Upload, Copy, Check } from "lucide-react";
 
 interface Task {
   id: string;
@@ -83,6 +83,7 @@ const TrelloBoard: React.FC = () => {
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [editingColumn, setEditingColumn] = useState<string | null>(null);
   const [editingTask, setEditingTask] = useState<string | null>(null);
+  const [copiedSection, setCopiedSection] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addSection = () => {
@@ -374,6 +375,27 @@ const TrelloBoard: React.FC = () => {
     fileInputRef.current?.click();
   };
 
+  const copySectionAsMarkdown = async (section: Section) => {
+    const markdownLines: string[] = [];
+    
+    section.columns.forEach(column => {
+      column.tasks.forEach(task => {
+        const checkbox = task.completed ? '[x]' : '[ ]';
+        markdownLines.push(`- ${checkbox} ${column.title}: ${task.title}`);
+      });
+    });
+    
+    const markdown = markdownLines.join('\n');
+    
+    try {
+      await navigator.clipboard.writeText(markdown);
+      setCopiedSection(section.id);
+      setTimeout(() => setCopiedSection(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-blue-50 p-6">
       <div className="flex justify-between items-center mb-6">
@@ -448,6 +470,21 @@ const TrelloBoard: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => copySectionAsMarkdown(section)}
+                  className={`p-1.5 rounded transition-colors ${
+                    copiedSection === section.id
+                      ? "bg-green-200 text-green-600"
+                      : "bg-gray-200 hover:bg-gray-300 text-gray-600"
+                  }`}
+                  title="Copy as Markdown"
+                >
+                  {copiedSection === section.id ? (
+                    <Check size={16} />
+                  ) : (
+                    <Copy size={16} />
+                  )}
+                </button>
                 <button
                   onClick={() => addColumn(section.id)}
                   className="bg-gray-200 hover:bg-gray-300 text-gray-600 p-1.5 rounded transition-colors"
@@ -544,7 +581,7 @@ const TrelloBoard: React.FC = () => {
                                 task.id
                               )
                             }
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
+                            className="w-4 h-4 accent-gray-500 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 focus:ring-2 cursor-pointer"
                             onClick={(e) => e.stopPropagation()}
                           />
                           <div className="flex justify-between items-center flex-1">
