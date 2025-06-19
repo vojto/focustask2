@@ -46,33 +46,47 @@ const useLocalStorage = <T,>(key: string, initialValue: T) => {
 const TrelloBoard: React.FC = () => {
   const [sections, setSections] = useLocalStorage<Section[]>("trello-sections", [
     {
-      id: "1",
-      title: "Project Planning",
+      id: "finished",
+      title: "✅ Finished",
       columns: [
-        {
-          id: "c1",
-          title: "To Do",
-          tasks: [
-            { id: "t1", title: "Sample task 1", completed: false },
-            { id: "t3", title: "Completed sample task", completed: true },
-          ],
-        },
-        {
-          id: "c2",
-          title: "In Progress",
-          tasks: [{ id: "t2", title: "Sample task 2", completed: false }],
-        },
-        { id: "c3", title: "Done", tasks: [] },
-      ],
+        { id: "mon", title: "Mon", tasks: [] },
+        { id: "tue", title: "Tue", tasks: [] },
+        { id: "wed", title: "Wed", tasks: [] },
+        { id: "thu", title: "Thu", tasks: [] },
+        { id: "fri", title: "Fri", tasks: [] },
+        { id: "weekend", title: "Sat+Sun", tasks: [] }
+      ]
     },
     {
-      id: "2",
-      title: "Development",
+      id: "current",
+      title: "🔥 Current",
       columns: [
-        { id: "c4", title: "Backlog", tasks: [] },
-        { id: "c5", title: "In Development", tasks: [] },
-      ],
+        { id: "quickie", title: "Quickie", tasks: [] },
+        { id: "errand", title: "Errand", tasks: [] },
+        { id: "chore", title: "Chore", tasks: [] },
+        { id: "project", title: "Project", tasks: [] }
+      ]
     },
+    {
+      id: "backlog",
+      title: "📋 Backlog",
+      columns: [
+        { id: "backlog-quickie", title: "Quickie", tasks: [] },
+        { id: "backlog-errand", title: "Errand", tasks: [] },
+        { id: "backlog-chore", title: "Chore", tasks: [] },
+        { id: "backlog-project", title: "Project", tasks: [] }
+      ]
+    },
+    {
+      id: "icebox",
+      title: "🧊 Icebox",
+      columns: [
+        { id: "icebox-quickie", title: "Quickie", tasks: [] },
+        { id: "icebox-errand", title: "Errand", tasks: [] },
+        { id: "icebox-chore", title: "Chore", tasks: [] },
+        { id: "icebox-project", title: "Project", tasks: [] }
+      ]
+    }
   ]);
 
   const [draggedTask, setDraggedTask] = useState<{
