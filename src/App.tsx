@@ -380,14 +380,40 @@ const TrelloBoard: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800">
           FocusTask
         </h1>
-        <button
-          onClick={addSection}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-        >
-          <Plus size={20} />
-          Add Section
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={exportData}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            title="Export Data"
+          >
+            <Download size={16} />
+            Export
+          </button>
+          <button
+            onClick={triggerImport}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            title="Import Data"
+          >
+            <Upload size={16} />
+            Import
+          </button>
+          <button
+            onClick={addSection}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <Plus size={20} />
+            Add Section
+          </button>
+        </div>
       </div>
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={importData}
+        accept=".json"
+        style={{ display: 'none' }}
+      />
 
       <div className="bg-white border border-gray-300 overflow-hidden">
         {sections.map((section, sectionIndex) => (
